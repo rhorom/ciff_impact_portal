@@ -1,0 +1,95 @@
+#app-menu {
+  box-shadow: 2px 4px rgba(0,0,0,0.25);
+  background-color: white;
+  pointer-events: auto;
+}
+
+.dropdowns {
+  max-width: max(170px, 33vw);
+}
+
+.modal-header {
+  padding: 5px 20px 5px 15px;
+  background-color: #e9546e;
+  color: white
+}
+
+.modal-body {
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+.accordion {
+  box-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+  border-radius: 5px;
+}
+
+.accordion-button {
+  padding: 8px;
+  margin-bottom: 2px;
+  background: rgba(0,0,0,0.1);
+}
+
+.accordion-body {
+  padding: 8px;
+}
+
+.accordion-button:not(.collapsed) {
+  background-color: #e9546e;
+  color: white;
+}
+
+.badge {
+  margin: 0 5px 0 0;
+}
+
+.leaflet-control-zoom{
+  position: relative;
+  left: -2px;
+  top: calc(100vh - 85px);
+}
+
+#list-info {
+  max-height: calc(100vh - 130px);
+  overflow-y: auto;
+}
+
+#detail-info {
+  max-height: 40vh;
+  overflow-y: auto;
+}
+
+.cmarker {
+  color: #000;
+  background-color: rgba(255,189,0,0.8);
+  border: 5px solid rgba(255,255,255,0.5);
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
+  text-align: center;
+  font-weight: bold;
+  vertical-align: bottom;
+  font-size: 14px;
+  pointer-events: none;
+}
+
+path.leaflet-interactive:focus {
+  outline: none;
+}
+
+@media only screen and (max-width: 576px) {
+  /* for phones */
+  #panel-info {
+    top: 60vh;
+    position: absolute;
+  }
+  #list-info {
+    max-height: 31vh;
+  }
+  #detail-info {
+    max-height: 20vh;
+  }
+  .leaflet-control-zoom{
+    top: calc(60vh - 85px);
+  }
+}
