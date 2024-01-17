@@ -13,6 +13,11 @@ export default defineConfig({
   esbuild: {
     loader: 'jsx',
   },
+  resolve: {
+    alias: {
+      './runtimeConfig': './runtimeConfig.browser',
+    },
+  },
   optimizeDeps: {
     esbuildOptions: {
       loader: {
