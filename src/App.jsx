@@ -48,7 +48,7 @@ function AppMenu({ setting, setSetting }) {
 
   return (
     <>
-    <Navbar expand='lg'>
+    <Navbar expand='sm'>
       <Navbar.Brand href='./'>
         <div className='hstack gap-3' style={{height:'40px'}}>
           {/*
