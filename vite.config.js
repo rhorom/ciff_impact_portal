@@ -9,5 +9,8 @@ export default defineConfig({
     fs: {
       allow: ['..',]
     }
-  }
+  },
+  esbuild: {
+    loader: 'jsx',
+  },
 })
