@@ -18,6 +18,7 @@ import { About, Procedure, Glossary, Setting } from './pages'
 import { columns, badgeContent, shortContent, mediumContent, longContent } from './config'
 import table from './data/impact_table.json'
 import { onlyUnique, filterData } from './utils'
+import logo from './assets/logo.svg'
 
 export default function App() {
   return (
@@ -51,7 +52,7 @@ function AppMenu({ setting, setSetting }) {
     <Navbar expand='lg'>
       <Navbar.Brand href='./'>
         <div className='hstack gap-3' style={{height:'40px'}}>
-          <img alt='ciff-logo' src='../public/logo.svg' height='40px'/>
+          <img alt='ciff-logo' src={logo} height='40px'/>
           <div className='vr'></div>
           <div>Impact Portal</div>
         </div>
