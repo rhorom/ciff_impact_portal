@@ -7,7 +7,7 @@ export function About () {
     return (
         <div>
             <p>
-                CIFF Impact Portal shows the map of countries and regions where CIFF-funded programmes are implemented and evaluated.
+                CIFF Impact Portal shows the map of countries and regions where CIFF-funded programmes are implemented and evaluated. How this portal is normally used can be found in <a href='#/sop'>Standard Operating Procedure</a> page.
             </p>
 
             <h5>Disclaimer</h5>
@@ -26,10 +26,6 @@ export function About () {
             <li>The administrative boundaries for the remaining countries were sourced from <a href='https://geoboundaries.org' target='_blank'>geoboundaries.org</a> (<a href='https://doi.org/10.1371/journal.pone.0231866' target='_blank'>Rufalo et al., 2020</a>).
             </li>
             </ul>
-
-            <hr/>
-            <p>This web portal was developed by the Spatial Data Infrastructure (<a href='https://sdi.worldpop.org' target='_blank'>SDI</a>) Team at WorldPop. The work is funded by the Children's Investment Fund Foundation (<a href='https://ciff.org'>CIFF</a>).
-            </p>
         </div>
     )
 }
@@ -38,16 +34,16 @@ export function Procedure () {
     return (
         <div>
             <ul>
-            <li>Select a country by clicking any highlighted region on the map. CIFF investment(s) in this country will be listed on the top right panel. The number of evaluations per country is displayed on the map.</li>
-            <li>Click any investment to see further information.
+            <li>Select a country by clicking any highlighted region on the map. Evaluation(s) in this country will be visually summarised and listed on the right panel. The number of evaluations per country is displayed on the map.</li>
+            <li>Click <kbd><i className='pi pi-file-export'/> Detail</kbd> on any listed evaluation to see further information.
             <ul>
-            <li>Some investments contain <Badge bg='info'>Geo-coordinate</Badge> of the locations related to the investments. For such investment, location points are displayed on the map.</li>
-            <li>Some investments are implemented in multiple countries. For such investment, <Badge size='sm'>Multi-Country</Badge> button can be clicked to show the countries on the map.</li>
-            <li>Data or publication related to some completed investments can be accessed by clicking <Badge size='sm'>Link to Data</Badge>.</li>
+            <li>Some evaluations contain <Badge pill bg='warning' text='dark'>Geo-coordinate</Badge> of the locations related to the evaluations. For such evaluation, location points are displayed on the map.</li>
+            <li>Some evaluations are marked with  <Badge pill size='sm'>Multi-country</Badge> since they are conducted in multiple countries. All relevant countries are shown on the map.</li>
+            {/*<li>Data or publication related to some completed investments can be accessed by clicking <Badge pill size='sm'>Link to Data</Badge>.</li>*/}
             </ul>
             </li>
-            <li>Filtering by <b>Country</b>, <b>Sector</b>, <b>Target Population</b>, <b>Primary Outcome</b>, and/or <b>Status</b> can also be done using the top-left panel.</li>
-            <li>Click <kbd>Reset</kbd> to clear/reset the filter. Double click on the map will also reset the state.</li>
+            <li>Filtering by <b>Country</b>, <b>Sector</b>, <b>Target Population</b>, <b>Primary Outcome</b>, <b>Status</b> and/or <b>Evaluator</b> can also be done using the top panel.</li>
+            <li>Click <kbd><i className='pi pi-undo'/> Reset</kbd> to clear/reset the filter. Double click on the map will also reset the state.</li>
             {/*<li>Click <span className='pi pi-cog'></span> to perform additional setting to the map, such as toggle country labels, map scale, and auto-zoom functionality.</li>*/}
             </ul>
         </div>

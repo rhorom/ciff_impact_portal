@@ -1,10 +1,11 @@
 export const columns = {
     'country':'Country', 'sector':'Sector', 'population':'Target Population', 
-    'outcome':'Primary Outcome', 'status':'Status'}
+    'outcome':'Primary Outcome', 'status':'Status', 'evaluator':'Evaluator'}
 
+export const homepage = 'localhost:5173'
 export const badgeContent = ['Years of Investment', 'Status']
-export const shortContent = ['Sector', 'Target Population', 'Primary Outcome']
-export const mediumContent = ['Implementing Agency', 'Evaluation Agency']
+export const shortContent = ['Country', 'Sector', 'Target Population', 'Primary Outcome', 'Implementing Agency', 'Evaluation Agency']
+export const midContent = ['Sector', 'Target Population', 'Primary Outcome']
 export const longContent = ['Programme Description', 'Study Design', 'Areas of Programme', 'Impact Statement']
 
 export const palette = {
@@ -21,6 +22,16 @@ export const palette = {
     'warmGray':'#e8e5e3',
     'lightGray':'#f0f0f0'
 };
+
+export const iconMapper = {
+    'Agriculture': './assets/icon-agriculture.png',
+    'Maternal Health': './assets/icon-maternal.png',
+    'NTDs': './assets/icon-ntds.png',
+    'Newborn Health': './assets/icon-newborn.png',
+    'Nutrition': './assets/icon-nutrition.png',
+    'Performance Management': './assets/icon-management.png',
+    'WASH': './assets/icon-wash.png'
+}
 
 export const basemaps = {
     'esri-gray': 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}',
@@ -53,7 +64,7 @@ export const regionStyle = {
     weight: 1,
     color: palette['ciffPink'],
     opacity: 1,
-    fillOpacity: 0.5,
+    fillOpacity: 1,
     fillColor: palette['ciffGold'],
     zIndex: 800,
 }

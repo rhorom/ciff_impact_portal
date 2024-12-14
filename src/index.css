@@ -4,8 +4,8 @@
   pointer-events: auto;
 }
 
-.dropdowns {
-  max-width: max(170px, 33vw);
+kbd {
+  background-color: #e9546e;
 }
 
 .modal-header {
@@ -43,20 +43,41 @@
   margin: 0 5px 0 0;
 }
 
+.completed {
+  background-color: 'green';
+  color: '#fff';
+}
+
 .leaflet-control-zoom{
   position: relative;
   left: -2px;
   top: calc(100vh - 85px);
 }
 
-#list-info {
-  max-height: calc(100vh - 130px);
-  overflow-y: auto;
+.title {
+  font-size: medium;
+  font-weight: bold;
 }
 
-#detail-info {
-  max-height: 40vh;
-  overflow-y: auto;
+.subtitle {
+  font-size: small;
+  font-style: italic;
+}
+
+.short-content {
+  font-size: smaller;
+  border: 2px;
+  padding-left: 5px;
+  border-style: none none none solid;
+  border-width: 5px;
+}
+
+.small-only {
+  display: none;
+}
+
+.large-only {
+  display: block;
 }
 
 .cmarker {
@@ -77,18 +98,66 @@ path.leaflet-interactive:focus {
   outline: none;
 }
 
+.pill {
+  font-size: 'small';
+}
+
+#list-info {
+  max-height: calc(72vh - 90px);
+  overflow-y: auto;
+}
+
+#infographic {
+  max-height: calc(72vh - 90px);
+  overflow-y: auto;
+}
+
+#detail-info {
+  max-height: 40vh;
+  overflow-y: auto;
+}
+
+#panel-map {
+  padding-left: 0px;
+  padding-right: 10px;
+}
+
+@media only screen and (max-width: 1200px) {
+  .subtitle {
+    display: None;
+  }
+}
+
 @media only screen and (max-width: 576px) {
   /* for phones */
-  #panel-info {
-    top: 60vh;
-    position: absolute;
+  .small-only {
+    display: block;
   }
+
+  .large-only {
+    display: none;
+  }
+  
+  #panel-filter {
+    max-height: 38vh;
+    overflow-y: auto;
+  }
+
+  #panel-info {
+    font-size: smaller;
+  }
+
+  #panel-map {
+    padding: 0px;
+  }
+
   #list-info {
     max-height: 31vh;
   }
   #detail-info {
     max-height: 20vh;
   }
+  
   .leaflet-control-zoom{
     top: calc(60vh - 85px);
   }
