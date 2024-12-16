@@ -1,3 +1,5 @@
+//const icons = import.meta.glob("./../public/icon-*")
+
 export const columns = {
     'country':'Country', 'sector':'Sector', 'population':'Target Population', 
     'outcome':'Primary Outcome', 'status':'Status', 'evaluator':'Evaluator'}
@@ -24,13 +26,13 @@ export const palette = {
 };
 
 export const iconMapper = {
-    'Agriculture': './assets/icon-agriculture.png',
-    'Maternal Health': './assets/icon-maternal.png',
-    'NTDs': './assets/icon-ntds.png',
-    'Newborn Health': './assets/icon-newborn.png',
-    'Nutrition': './assets/icon-nutrition.png',
-    'Performance Management': './assets/icon-management.png',
-    'WASH': './assets/icon-wash.png'
+    'Agriculture': './icon-agriculture.png',
+    'Maternal Health': './icon-maternal.png',
+    'NTDs': './icon-ntds.png',
+    'Newborn Health': './icon-newborn.png',
+    'Nutrition': './icon-nutrition.png',
+    'Performance Management': './icon-management.png',
+    'WASH': './icon-wash.png'
 }
 
 export const basemaps = {

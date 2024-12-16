@@ -39,6 +39,7 @@ export function Procedure () {
             <ul>
             <li>Some evaluations contain <Badge pill bg='warning' text='dark'>Geo-coordinate</Badge> of the locations related to the evaluations. For such evaluation, location points are displayed on the map.</li>
             <li>Some evaluations are marked with  <Badge pill size='sm'>Multi-country</Badge> since they are conducted in multiple countries. All relevant countries are shown on the map.</li>
+            <li>Selected evaluation can be opened in a new page by clicking <kbd><i className='pi pi-window-maximize '/></kbd></li>
             {/*<li>Data or publication related to some completed investments can be accessed by clicking <Badge pill size='sm'>Link to Data</Badge>.</li>*/}
             </ul>
             </li>

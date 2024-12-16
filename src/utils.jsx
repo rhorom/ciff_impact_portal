@@ -46,3 +46,6 @@ export function getBbox(gj){
   return [[totalBbox[1],totalBbox[0]], [totalBbox[3],totalBbox[2]]]
 }
 
+export function getImageUrl(name) {
+  return new URL(name, import.meta.url).href
+}

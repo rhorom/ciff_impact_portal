@@ -1,4 +1,4 @@
-import { Image, Stack } from 'react-bootstrap'
+import { Badge, Image, Stack } from 'react-bootstrap'
 import 'primeicons/primeicons.css'
 import { countOccurrence } from './utils'
 import { iconMapper } from './config'
@@ -39,6 +39,40 @@ function BarSector({ tally }){
 }
 
 function BarStatus({ tally }){
+    const nt1 = (tally['Completed'][0] + tally['On-going'][0])
+    const nt2 = (tally['Completed'][1] + tally['On-going'][1])
+    
+    const checks = (
+    <div className='mt-1 px-1'>
+        {nt1 > 0 ? (<div style={{maxWidth:'300px'}}>
+        <div style={{fontSize:'x-small'}}><b>
+            Internal evaluations </b>
+            {tally['Completed'][0] > 0 ? <Badge bg='success'>{tally['Completed'][0]} complete </Badge> : ''}
+            {tally['On-going'][0] > 0 ? <Badge bg='info'>{tally['On-going'][0]} on-going </Badge> : ''}
+        </div>
+            {[...Array(tally['Completed'][0]).keys()].map((x) => {return <span key={x} className='bg-success text-light p-1 pb-0' style={{fontSize:'small'}}><i className='pi pi-check-circle'/></span>})}
+            {[...Array(tally['On-going'][0]).keys()].map((x) => {return <span key={x} className='bg-info text-light p-1 pb-0' style={{fontSize:'small'}}><i className='pi pi-circle'/></span>})}
+        </div>) : <></>}
+
+        {nt2 > 0 ? (<div>
+        <div style={{fontSize:'x-small'}}><b>
+            External evaluations </b>
+            {tally['Completed'][1] > 0 ? <Badge bg='success'>{tally['Completed'][1]} complete </Badge> : ''}
+            {tally['On-going'][1] > 0 ? <Badge bg='info'>{tally['On-going'][1]} on-going </Badge> : ''}
+        </div>
+            {[...Array(tally['Completed'][1]).keys()].map((x) => {return <span key={x} className='bg-success text-light p-1 pb-0' style={{fontSize:'small'}}><i className='pi pi-check-circle'/></span>})}
+            {[...Array(tally['On-going'][1]).keys()].map((x) => {return <span key={x} className='bg-info text-light p-1 pb-0' style={{fontSize:'small'}}><i className='pi pi-circle'/></span>})}
+        </div>) : <></>}
+
+    </div>)
+
+    return <div className='mt-4 p-1 border border-danger rounded-2'>
+        <div style={{marginTop:'-20px'}}><kbd><b>By Status</b></kbd></div>
+        {checks}
+    </div>
+}
+
+function BarStatusX({ tally }){
     const nt1 = (tally['Completed'][0] + tally['On-going'][0])
     const nt2 = (tally['Completed'][1] + tally['On-going'][1])
     const p1 = (10*tally['On-going'][0]/nt1).toFixed(0)

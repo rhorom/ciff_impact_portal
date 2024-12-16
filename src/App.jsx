@@ -9,6 +9,7 @@ import { Modal, Nav, Navbar, NavDropdown } from 'react-bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'primeicons/primeicons.css'
 import './index.css'
+import logo from './../public/logo-lg.png'
 
 import { MainApp } from './MainApp.jsx'
 import { About, Procedure, Glossary } from './Pages.jsx'
@@ -30,7 +31,7 @@ function modalContent(val){
 
 function Layout() {
   const [modal, setModal] = useState(false)
-
+  
   return (
     <div>
       <div className='shadow mb-4'>
@@ -38,7 +39,7 @@ function Layout() {
           <Navbar expand='md'>
             <Navbar.Brand href='https://ciff.org'>
               <div className='hstack gap-3' style={{height:'40px'}}>
-                <img alt='ciff-logo' src='./assets/logo-lg.png' height='40px'/>
+                <img alt='ciff-logo' src={logo} height='40px'/>
                 <div className='vr'></div>
                 <div>Impact Portal</div>
               </div>
