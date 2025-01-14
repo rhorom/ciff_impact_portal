@@ -1,13 +1,16 @@
-import { Badge, Image, Stack } from 'react-bootstrap'
+import { useMemo } from 'react'
+import { Badge, Button, Image, Stack } from 'react-bootstrap'
 import 'primeicons/primeicons.css'
-import { countOccurrence } from './utils'
+import { countOccurrence, onlyUnique } from './utils'
 import { iconMapper } from './config'
+//import { Button } from 'react-bootstrap/lib/InputGroup'
 
-function Bar(n1, n2, nt, suffix=['',''], color=['#e9546e','#189cac']){
-    const w1 = 250*n1/nt
-    const w2 = 250*n2/nt
+function Bar(n1, n2, nt, suffix=['',''], color=['#e9546e','#189cac'], width=200){
+    const w0 = width + 10
+    const w1 = width*n1/nt
+    const w2 = width*n2/nt
 
-    return <svg width='260px' height='20px'>
+    return <svg width={w0} height='20px'>
         <rect width={w1} height='20' x='0' y='0' rx='5' ry='5' stroke='#fff' fill={color[0]}/>
         <rect width={w2} height='20' x={w1} y='0' rx='5' ry='5' stroke='#fff' fill={color[1]}/>
         {n1 > 0 ? <text x={w1-5} y='15' textAnchor='end' fill='#fff' fontSize='small' fontWeight='bold'>{(n1).toFixed(0)}{suffix[0]}</text> : <></>}
@@ -15,24 +18,35 @@ function Bar(n1, n2, nt, suffix=['',''], color=['#e9546e','#189cac']){
     </svg>
 }
 
-function BarSector({ tally }){
+function BarSector({ tally, param_, setParam_ }){
+    function selectSector(e){
+        setParam_({...param_, sector:e})
+        //console.log(e)
+    }
+
     let nt = 1
     let bars = []
+    const width = document.documentElement.clientWidth < 1080 ? 200 : 250
+    
     Object.keys(tally).forEach((k) => {nt = Math.max(nt, tally[k][0] + tally[k][1])})
     Object.keys(tally).forEach((k) => {
         bars.push(
-            <div key={k} className='m-1'>
+            <Button key={k} variant='light' className='m-0 p-0' title='Select sector' onClick={() => selectSector(k)}>
+            <div className='m-0'>
+            <div className='m-0 p-0'>
             <Stack direction='horizontal' gap={1}>
                 <Image src={iconMapper[k]} height='30px' roundedCircle/>
-                <div>
+                <div style={{textAlign:'left'}}>
                     <div style={{fontSize:'x-small', marginBottom:'-0.5em'}}><b>{k}</b> | {tally[k][0]+tally[k][1]} evaluation{nt>1?'s':''}</div>
-                    {Bar(tally[k][0], tally[k][1], nt, [' int',' ext'])}
+                    {Bar(tally[k][0], tally[k][1], nt, [' int',' ext'], ['#e9546e','#189cac'], width)}
                 </div>
             </Stack>
             </div>
+            </div>
+            </Button>
         )
     })
-    return <div className='mt-4 p-1 border border-danger rounded-2'>
+    return <div className='mt-4 p-2 border border-danger rounded-2'>
         <div style={{marginTop:'-20px'}}><kbd><b>By Sector</b></kbd></div>
         <div>{bars}</div>
         </div>
@@ -160,33 +174,50 @@ function Numbers({ data, single=false}){
 }
 
 function getTally(a, b, col){
-    const ca = countOccurrence(a.map((item) => item[col].split(', ')).flat(), true)
+    const ca = countOccurrence(a.map((item) => item[col].split(', ')).flat())
     const cb = countOccurrence(b.map((item) => item[col].split(', ')).flat())
+    
+    const ka = Object.keys(ca)
+    const kb = Object.keys(cb)
 
+    let keys = []
     let tally = {}
-    Object.keys(ca).forEach((k) => {tally[k] = [ca[k], 0]})
-    Object.keys(cb).forEach((k) => {tally[k][1] = cb[k]})
+    ka.forEach((k) => keys.push(k))
+    kb.forEach((k) => keys.push(k))
+    keys = keys.filter(onlyUnique).sort()
+    
+    keys.forEach((k) => {
+        tally[k] = [0,0]
+        if (ka.includes(k)) {tally[k][0] = ca[k]}
+        if (kb.includes(k)) {tally[k][1] = cb[k]}
+    })
 
     return tally
 }
 
-export function Graphic({ data, single=false }){
+export function Graphic({ data, param, setParam, single=false }){
     const dataInt = data.filter((item) => item['Evaluator'] === 'CIFF')
     const dataExt = data.filter((item) => item['Evaluator'] !== 'CIFF')
 
     const tallySector = getTally(dataInt, dataExt, 'Sector')
-    let tallyStatus = getTally(dataInt, dataExt, 'Status')
     
+    {/*
+    let tallyStatus = getTally(dataInt, dataExt, 'Status')
     if (!('Completed' in tallyStatus)) {
         tallyStatus['Completed'] = [0,0]
     }
     if (!('On-going' in tallyStatus)) {
         tallyStatus['On-going'] = [0,0]
     }
+    */}
+
+    const sectors = useMemo(() => {
+        return <BarSector tally={tallySector} param_={param} setParam_={setParam}/>
+    }, [tallySector, param])
 
     return <div id='infographic'>
         <Numbers data={data} single={single}/>
-        <BarSector tally={tallySector}/>
-        <BarStatus tally={tallyStatus}/>
+        {sectors}
+        {/*<BarStatus tally={tallyStatus}/>*/}
     </div>
 }

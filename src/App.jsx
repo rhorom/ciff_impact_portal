@@ -9,7 +9,7 @@ import { Modal, Nav, Navbar, NavDropdown } from 'react-bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'primeicons/primeicons.css'
 import './index.css'
-import logo from './../public/logo-lg.png'
+import logo from '/logo-lg.png'
 
 import { MainApp } from './MainApp.jsx'
 import { About, Procedure, Glossary } from './Pages.jsx'

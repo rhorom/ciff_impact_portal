@@ -1,6 +1,4 @@
-import { useMemo, useCallback } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import * as JSURL from 'jsurl';
+import { useMemo } from 'react';
 import { Accordion } from 'react-bootstrap';
 
 import 'leaflet/dist/leaflet.css';
@@ -9,28 +7,11 @@ import './index.css';
 
 import { columns } from './config';
 import table from './data/impact_table.json';
-import { filterData } from './utils';
+import { filterData, useQueryParam } from './utils';
 import { FilterPanel } from './PanelFilter';
 import { InfoPanel } from './PanelInfo';
 import { Map } from './Map';
 import { Graphic } from './Graphic';
-
-function useQueryParam(key) {
-    let [searchParams, setSearchParams] = useSearchParams();
-    let paramValue = searchParams.get(key);
-    let value = useMemo(() => JSURL.parse(paramValue), [paramValue]);
-    
-    let setValue = useCallback(
-      (newValue, options) => {
-        let newSearchParams = new URLSearchParams(searchParams);
-        newSearchParams.set(key, JSURL.stringify(newValue));
-        setSearchParams(newSearchParams, options);
-      },
-      [key, searchParams, setSearchParams]
-    );
-  
-    return [value, setValue];
-}
 
 export function MainApp(){
     let [filter, setFilter] = useQueryParam('filter')
@@ -43,11 +24,9 @@ export function MainApp(){
         outcome: '',
         status: '',
         evaluator: '',
-        id: '',
-        multi: false
       }
     }
-  
+
     const filteredTable = useMemo(() => {
       return filterData(table, columns, filter)
     }, [filter])
@@ -75,7 +54,7 @@ export function MainApp(){
                     <b>Summary</b>
                 </Accordion.Header>
                 <Accordion.Body id='summary-graphic'>
-                  <Graphic data={filteredTable}/>
+                  <Graphic data={filteredTable} param={filter} setParam={setFilter} single={false}/>
                 </Accordion.Body>
             </Accordion.Item>
           </Accordion>

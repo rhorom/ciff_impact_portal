@@ -1,7 +1,6 @@
-import { useState, useMemo, useCallback } from 'react';
 import { useLocation } from "react-router";
 import { 
-    Accordion, Badge, Button, Card, Image, Modal, Stack
+    Card
 } from 'react-bootstrap'
 
 import 'primeicons/primeicons.css'

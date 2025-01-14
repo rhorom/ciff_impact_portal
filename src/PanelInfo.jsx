@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useCallback } from 'react'
+import { useState } from 'react'
 import parser from 'html-react-parser'
 import { 
   Accordion, Badge, Button, Card, Image, Modal, Stack
@@ -29,7 +29,7 @@ function Geoloc(){
     return <span className='pill'><Badge pill bg='warning' text='dark'>Geo-coordinate</Badge></span>
 }
 
-function Chvr(){return <i className='pi pi-chevron-circle-right mx-1'/>}
+function Chvr(){return <i className='pi pi-circle mx-1'/>}
 
 function EvalItem({ obj, func }){
     const sector = obj["Sector"].split(", ")[0]
@@ -106,6 +106,16 @@ export function DetailInfo({ obj }){
                     }
                     })}
             </div>
+
+            <div className='short-content'>
+                {obj['Link'] !== '' ? (<div>
+                    <h6 className='mt-2'><kbd>Published results</kbd></h6>
+                    <span><Chvr/>Link to external source </span>
+                    <a href={obj['Link']} target='_blank' rel="noreferrer"><span className='pi pi-external-link'></span></a><br/>
+                </div>) : <></>}
+            </div>
+
+
         </div>
 
         <div className='col-sm-8 mb-3'>
@@ -125,7 +135,6 @@ export function DetailInfo({ obj }){
             <div className='mb-3' style={{height:'300px'}}>
                 <MapSmall data={obj}/>
             </div>
-
             <div className='short-content'>
                 {obj["Region"] ? 
                     <span>
@@ -151,6 +160,7 @@ export function DetailInfo({ obj }){
                 }
                 })}
             </div>
+
         </div>
 
     </div>
@@ -167,17 +177,9 @@ export function InfoPanel({ data, param, setParam }) {
     return (
     <div className='p-0 m-0'>
         <Accordion defaultActiveKey='summary' flush>
-            <Accordion.Item eventKey='summary'>
-                <Accordion.Header>
-                    <b>Summary of Evaluation{n > 1 ? 's' : ''} in {param.country}</b>
-                </Accordion.Header>
-                <Accordion.Body>
-                <Graphic data={data} single={true}/>
-                </Accordion.Body>
-            </Accordion.Item>
             <Accordion.Item eventKey='list'>
                 <Accordion.Header>
-                    <b>List of evaluation{n > 1 ? 's' : ''}</b>
+                    <b>List of Evaluation{n > 1 ? 's' : ''} in {param.country}</b>
                 </Accordion.Header>
                 <Accordion.Body>
                     <div id='list-info'>
@@ -185,6 +187,15 @@ export function InfoPanel({ data, param, setParam }) {
                             return <EvalItem obj={item} key={i} func={setShowModal}/>
                         })}
                     </div>
+                </Accordion.Body>
+            </Accordion.Item>
+
+            <Accordion.Item eventKey='summary'>
+                <Accordion.Header>
+                    <b>Summary of Evaluation{n > 1 ? 's' : ''} in {param.country}</b>
+                </Accordion.Header>
+                <Accordion.Body>
+                <Graphic data={data} param={param} setParam={setParam} single={true}/>
                 </Accordion.Body>
             </Accordion.Item>
         </Accordion>

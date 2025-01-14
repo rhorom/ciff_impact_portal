@@ -56,7 +56,7 @@ export function FilterPanel({ data, cols, param, setParam }) {
             }
             </div>
             <div className='mt-1 d-flex justify-content-end'>
-              <Button size='sm' variant='danger' href='/'><i className='pi pi-undo'/> Reset</Button>
+              <Button size='sm' variant='danger' href='./'><i className='pi pi-undo'/> Reset</Button>
             </div>
           </Accordion.Body>
         </Accordion.Item>

@@ -1,15 +1,14 @@
-import { useState, useMemo, useCallback, useRef, useEffect } from 'react'
+import { useMemo, useRef, useEffect, useCallback } from 'react'
 import { renderToString } from 'react-dom/server'
-import { MapContainer, GeoJSON, Marker, CircleMarker, Popup, Pane, TileLayer, useMap } from 'react-leaflet'
-import { Accordion, Badge, Button, ButtonGroup, Stack } from 'react-bootstrap'
+import { MapContainer, GeoJSON, Marker, Pane, TileLayer, useMap } from 'react-leaflet'
+import { Badge, Button, ButtonGroup, Stack } from 'react-bootstrap'
 import 'leaflet/dist/leaflet.css'
 import * as L from 'leaflet'
 import 'primeicons/primeicons.css'
 import { CircleFlag } from 'react-circle-flags'
-import table from './data/impact_table.json'
 import boundary from './data/boundary.json'
 import { countOccurrence, getBbox } from './utils'
-import { activeStyle, regionStyle, basemaps } from './config'
+import { basemaps } from './config'
 
 //let main_map
 
@@ -20,7 +19,7 @@ let main_map
 //const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0)
 //const height = vw < 576 ? '60vh' : '100vh'
 
-export function Map({ data, param, setParam }){
+export function Map({ data, param, setParam }){  
     let countryInt = data.filter((item) => item['Evaluator'] === 'CIFF')
         .map((item) => item.Country.split(', '))
         .flat()
@@ -47,6 +46,7 @@ export function Map({ data, param, setParam }){
         features.forEach((feature) => {
             feature.properties['countInt'] = countInt[feature.properties.Country]
             feature.properties['countExt'] = countExt[feature.properties.Country]
+            feature.param = param
         })
 
         return features
@@ -70,14 +70,16 @@ export function Map({ data, param, setParam }){
         main_map.flyToBounds(bounds)
     }
 
-    function Legend(){
+    function Legend({countInt, countExt}){
+        const showInt = Object.keys(countInt).length > 0
+        const showExt = Object.keys(countExt).length > 0
         return (
           <div id='legend-panel' className='leaflet-bottom leaflet-left'>
             <div className='leaflet-control'>
                 <div className='bg-light rounded p-1'>
                     <b>Legend</b>
-                    <Stack direction='horizontal' gap={1}><i className='pi pi-circle-fill' style={{color:'#e90051', opacity:0.5}}/>with evaluation(s)</Stack>
-                    <Stack direction='horizontal' gap={1}><i className='pi pi-circle-fill' style={{color:'#189cac', opacity:0.5}}/>with external evaluation(s)</Stack>
+                    {showInt ? <Stack direction='horizontal' gap={1}><i className='pi pi-circle-fill' style={{color:'#e90051', opacity:0.5}}/>with evaluation(s)</Stack> : <></>}
+                    {showExt > 0 ? <Stack direction='horizontal' gap={1}><i className='pi pi-circle-fill' style={{color:'#189cac', opacity:0.5}}/>with external evaluation(s)</Stack> : <></>}
                 </div>
             </div>
           </div>
@@ -150,15 +152,9 @@ export function Map({ data, param, setParam }){
         }</>
     }, [countryBoundary])
 
-    function selectCountry(val) {
-        let par = {...param}
-        par['country'] = val
-        par['id'] = ''
-        par['multi'] = false
-        countryInt = countryInt.includes(val) ? [val] : []
-        countryExt = countryExt.includes(val) ? [val] : []
-        setParam(par, {replace:false})
-    }
+    const theLegend = useMemo(() => {
+        return <Legend countInt={countInt} countExt={countExt}/>
+    }, [countInt, countExt])
 
     function onEachCountry(feature, layer){
         const info = document.getElementById('info')
@@ -175,7 +171,8 @@ export function Map({ data, param, setParam }){
             click: function(e){
                 layer.setStyle({weight:3})
                 main_map.fitBounds(e.target._bounds)
-                selectCountry(e.target.feature.properties.Country)
+                //selectCountry(e.target.feature.properties.Country)
+                setParam({...feature.param, country:feature.properties.Country})
             }
         })
     }
@@ -215,7 +212,7 @@ export function Map({ data, param, setParam }){
                 </Pane>
 
                 <ZoomPanel/>
-                <Legend/>
+                {theLegend}
                 <Info/>
 
             </MapContainer>

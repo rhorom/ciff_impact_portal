@@ -1,4 +1,7 @@
 import { bbox } from '@turf/bbox'
+import { useMemo, useCallback } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import * as JSURL from 'jsurl';
 
 export function onlyUnique(value, index, array) {
   return array.indexOf(value) === index;
@@ -48,4 +51,21 @@ export function getBbox(gj){
 
 export function getImageUrl(name) {
   return new URL(name, import.meta.url).href
+}
+
+export function useQueryParam(key) {
+    let [searchParams, setSearchParams] = useSearchParams();
+    let paramValue = searchParams.get(key);
+    let value = useMemo(() => JSURL.parse(paramValue), [paramValue]);
+    
+    let setValue = useCallback(
+      (newValue, options) => {
+        let newSearchParams = new URLSearchParams(searchParams);
+        newSearchParams.set(key, JSURL.stringify(newValue));
+        setSearchParams(newSearchParams, options);
+      },
+      [key, searchParams, setSearchParams]
+    );
+  
+    return [value, setValue];
 }

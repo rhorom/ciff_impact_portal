@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useMemo } from 'react'
 import { MapContainer, GeoJSON, CircleMarker, Pane, TileLayer, useMap } from 'react-leaflet'
 import { Button, Stack } from 'react-bootstrap'
 import 'leaflet/dist/leaflet.css'
@@ -40,7 +40,7 @@ export function MapSmall({ data }){
     const bounds = getBbox(countryBoundary)
 
     const refCountry = useRef()
-    const refRegion = useRef()
+    //const refRegion = useRef()
 
     useEffect(() => {
         if (refCountry.current) {
@@ -59,15 +59,18 @@ export function MapSmall({ data }){
         main_map.fitBounds(bounds)
     }
 
-    function Legend(){
+    function Legend({points, regions}){
+        const showPoints = points.length > 0
+        const showRegion = regions.length > 0
+
         return (
           <div id='legend-panel-small' className='leaflet-bottom leaflet-left'>
             <div className='leaflet-control'>
                 <div className='bg-light rounded p-1'>
                     <b>Legend</b>
                     <Stack direction='horizontal' gap={1}><i className='pi pi-circle-fill' style={{color:'#e90051', opacity:0.5}}/>Targetted country</Stack>
-                    <Stack direction='horizontal' gap={1}><i className='pi pi-circle-fill' style={{color:'#ffbd00', opacity:1.0}}/>Targetted region</Stack>
-                    <Stack direction='horizontal' gap={1}><i className='pi pi-circle-fill'/>Targetted location</Stack>
+                    {showRegion ? <Stack direction='horizontal' gap={1}><i className='pi pi-circle-fill' style={{color:'#ffbd00', opacity:1.0}}/>Targetted region</Stack> : <></>}
+                    {showPoints ? <Stack direction='horizontal' gap={1}><i className='pi pi-circle-fill'/>Targetted location</Stack> : <></>}
                 </div>
             </div>
           </div>
@@ -83,6 +86,10 @@ export function MapSmall({ data }){
           </div>
         )
     }
+
+    const theLegend = useMemo(() => {
+        return <Legend points={points} regions={regionBoundary}/>
+    }, [points, regionBoundary])
 
     return (
         <div>
@@ -130,7 +137,7 @@ export function MapSmall({ data }){
 
                 </Pane>
 
-                <Legend />
+                {theLegend}
                 <ZoomPanel />
 
                 <TileLayer url={basemaps['label']} zIndex={700}/>
