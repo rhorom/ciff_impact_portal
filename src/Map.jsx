@@ -1,4 +1,4 @@
-import { useMemo, useRef, useEffect, useCallback } from 'react'
+import { useMemo, useRef, useEffect } from 'react'
 import { renderToString } from 'react-dom/server'
 import { MapContainer, GeoJSON, Marker, Pane, TileLayer, useMap } from 'react-leaflet'
 import { Badge, Button, ButtonGroup, Stack } from 'react-bootstrap'
