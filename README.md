@@ -1,5 +1,11 @@
 # Impact Evaluation Portal
 
+![webapp](public/webApp.PNG)
+
+---
+
+To support impact evaluation performed by [Children Investment Fund Foundation (CIFF)](https://ciff.org), we developed a web application portal that includes an interactive map and data filtering. The portal acts as a showcase of investments/evaluations by CIFF happening in several countries around the Globe. It displays evaluations at both country- and subnational-level. Following the richness of information related to the listed investments/evaluations, dynamic overlays of the data on the map is implemented so that those information can be grasped easily.
+
 | App Name | CIFF Impact Evaluation Portal |
 | --- | --- |
 | Customer | CIFF (Children Investment Fund Foundation) |
@@ -8,14 +14,6 @@
 | Repository | https://rhorom.github.com/ciff_impact_portal |
 | Web URL | https://rhorom.github.io/ciff_impact_portal |
 | | https://impact.ciff.org |
-
----
-
-![webapp](public/webApp.PNG)
-
----
-
-To support impact evaluation performed by [Children Investment Fund Foundation (CIFF)](https://ciff.org), we developed a web application portal that includes an interactive map and data filtering. The portal acts as a showcase of investments/evaluations by CIFF happening in several countries around the Globe. It displays evaluations at both country- and subnational-level. Following the richness of information related to the listed investments/evaluations, dynamic overlays of the data on the map is implemented so that those information can be grasped easily.
 
 ## About this file
 The purpose of this file is to provide overview, background information, and setup information of the project. If you have joined this project as a part of the development team, please ensure this file is up to date.
@@ -36,6 +34,7 @@ Note : Any dependencies added/modified to this project which affect the running 
     - [Pages](#pages)
     - [Images](#images)
 - [Development setup](#development-setup)
+- [Deployment setup](#deployment-setup)
 
 ## Features
 Several functionalities are activated to ensure interactivity, informativeness, and efficacy of the portal. Firstly, the main functionality is intuitive filters to narrow down displayed evaluations based on various criteria (country, sector, target population, primary outcome, and evaluation status). Secondly, listing programmes associated with a selected country. Form-based filtering is linked to the map so that country selection can be performed through clicking a particular country on the map or selection through form. In case of multi-country investment/evaluation, all countries relevant to the programme can be displayed on the map. Lastly, more extensive information (programme description, implementation years, results, etc.) for a particular programme can also be showcased in a neat format.
@@ -232,6 +231,19 @@ As stated above, image files are stored in `./public/` directory, including icon
     ```
 
 1. Start development server to preview file changes: ```npm run dev```
+
+## Deployment setup
+1. Configure the package by modifying `package.json`
+    ```json
+    {
+        "name": "ciff_impact_portal",
+        "homepage": "https://impact.ciff.org",
+        "private": true,
+        "version": "0.2.0",
+        "type": "module",
+        ...
+    }
+    ```
 
 1. Build the app: ```npm run build```
 
