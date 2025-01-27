@@ -20,10 +20,10 @@ let main_map
 //const height = vw < 576 ? '60vh' : '100vh'
 
 export function Map({ data, param, setParam }){  
-    let countryInt = data.filter((item) => item['Evaluator'] === 'CIFF')
+    let countryInt = data.filter((item) => item['Sponsor'] === 'CIFF')
         .map((item) => item.Country.split(', '))
         .flat()
-    let countryExt = data.filter((item) => item['Evaluator'] !== 'CIFF')
+    let countryExt = data.filter((item) => item['Sponsor'] !== 'CIFF')
         .map((item) => item.Country.split(', '))
         .flat()
 
@@ -53,12 +53,17 @@ export function Map({ data, param, setParam }){
     }, [countryInt, countExt])
 
     const refCountry = useRef()
+    const refOverlay = useRef()
     useEffect(() => {
         if (refCountry.current) {
             refCountry.current.clearLayers()
             refCountry.current.addData(countryBoundary)
         }
-    }, [refCountry, countryBoundary])
+        if (refOverlay.current) {
+            refOverlay.current.clearLayers()
+            refOverlay.current.addData(countryBoundary)
+        }
+    }, [refCountry, refOverlay, countryBoundary])
 
     const DefineMap = () => {
         main_map = useMap();
@@ -71,15 +76,47 @@ export function Map({ data, param, setParam }){
     }
 
     function Legend({countInt, countExt}){
-        const showInt = Object.keys(countInt).length > 0
-        const showExt = Object.keys(countExt).length > 0
+        function label(c){
+            return <Stack direction='horizontal' gap={1}><i className='pi pi-circle-fill' 
+            style={{color:c['color'], opacity:0.25}}/>{c['label']}</Stack>
+        }
+
+        const colors = [
+            {
+                'color':'#e90051', 
+                'label':'internal evaluations'
+            }, 
+            {
+                'color':'#189cac', 
+                'label':'external evaluations'
+            }, 
+            {
+                'color':'#ffbd00', 
+                'label':'internal and external evaluations'
+            }, 
+        ]
+
+        let both = false
+        let idx = []
+        if (Object.keys(countInt).length > 0){
+            both = true
+            idx.push(0)
+        }
+        if (Object.keys(countExt).length > 0){
+            idx.push(1)
+            if (both){idx.push(2)}
+        }
+
         return (
           <div id='legend-panel' className='leaflet-bottom leaflet-left'>
             <div className='leaflet-control'>
                 <div className='bg-light rounded p-1'>
                     <b>Legend</b>
-                    {showInt ? <Stack direction='horizontal' gap={1}><i className='pi pi-circle-fill' style={{color:'#e90051', opacity:0.5}}/>with evaluation(s)</Stack> : <></>}
-                    {showExt > 0 ? <Stack direction='horizontal' gap={1}><i className='pi pi-circle-fill' style={{color:'#189cac', opacity:0.5}}/>with external evaluation(s)</Stack> : <></>}
+                    {idx.map((i) => {
+                        const c = colors[i]
+                        return <Stack key={i} direction='horizontal' gap={1}><i className='pi pi-circle-fill' 
+                        style={{color:c['color'], opacity:0.75}}/>{c['label']}</Stack>
+                    })}
                 </div>
             </div>
           </div>
@@ -111,21 +148,32 @@ export function Map({ data, param, setParam }){
         )
     }
 
+    const overlayStyle = {
+        opacity: 0.02,
+        color: '#fff',
+        fillColor: '#fff',
+        weight: 1
+    }
+
     function countryStyle(feature){
-        const color = feature.properties.countExt > 0 ? '#189cac' : '#e90051'
+        let idx = 0
+        const colors = ['#ffbd00', '#e90051', '#189cac', '#ffbd00']
+        if (feature.properties.countInt > 0){idx += 1}
+        if (feature.properties.countExt > 0){idx += 2}
+        
         return {
-            opacity: 0.5,
-            color: color,
-            fillColor: color,
+            opacity: 1,
+            color: colors[idx],
+            fillColor: colors[idx],
             weight: 1
         }
     }
 
     function iconTally(obj){
         const content = renderToString(
-            <Stack direction='horizontal' gap={1}>
-            <CircleFlag countryCode={obj.CountryISO} height={25}/>
-            <div>
+            <Stack direction='horizontal' gap={0}>
+            <CircleFlag countryCode={obj.CountryISO} height={20}/>
+            <div className='m-0 p-0'>
                 {obj.countInt > 0 ? <Badge bg='danger' text='light'>{obj.countInt} int</Badge> : <></>}
                 {obj.countExt > 0 ? <Badge bg='info' text='dark'>{obj.countExt} ext</Badge> : <></>}
             </div>
@@ -194,20 +242,28 @@ export function Map({ data, param, setParam }){
 
                 <DefineMap />
 
-                <Pane name='basemap' style={{zIndex:60}}>
+                <Pane name='basemap' style={{zIndex:50}}>
                     <TileLayer url={basemaps['positron']}/>
                 </Pane>
 
-                <Pane name='country-boundary' style={{zIndex:70}}>
+                <Pane name='country-boundary' style={{zIndex:100}}>
                     <GeoJSON
                         data={countryBoundary}
                         style={countryStyle}
                         ref={refCountry}
+                        />
+                </Pane>
+
+                <Pane name='overlay' style={{zIndex:300}}>
+                    <GeoJSON
+                        data={countryBoundary}
+                        style={overlayStyle}
+                        ref={refOverlay}
                         onEachFeature={onEachCountry}
                         />
                 </Pane>
 
-                <Pane name='country-tally' style={{zIndex:100}}>
+                <Pane name='country-tally' style={{zIndex:200}}>
                     {countryTally}
                 </Pane>
 

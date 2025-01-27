@@ -2,7 +2,7 @@
 
 export const columns = {
     'country':'Country', 'sector':'Sector', 'population':'Target Population', 
-    'outcome':'Primary Outcome', 'status':'Status', 'evaluator':'Evaluator'}
+    'outcome':'Primary Outcome', 'status':'Status', 'sponsor':'Sponsor'}
 
 export const homepage = 'localhost:5173'
 export const badgeContent = ['Years of Investment', 'Status']

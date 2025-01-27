@@ -3,7 +3,6 @@ import { Badge, Button, Image, Stack } from 'react-bootstrap'
 import 'primeicons/primeicons.css'
 import { countOccurrence, onlyUnique } from './utils'
 import { iconMapper } from './config'
-//import { Button } from 'react-bootstrap/lib/InputGroup'
 
 function Bar(n1, n2, nt, suffix=['',''], color=['#e9546e','#189cac'], width=200){
     const w0 = width + 10
@@ -127,8 +126,8 @@ function BarStatusX({ tally }){
 }
 
 function Numbers({ data, single=false}){
-    const nInt = data.filter((item) => item['Evaluator'] === 'CIFF').length
-    const nExt = data.filter((item) => item['Evaluator'] !== 'CIFF').length
+    const nInt = data.filter((item) => item['Sponsor'] === 'CIFF').length
+    const nExt = data.filter((item) => item['Sponsor'] !== 'CIFF').length
     const nMulti = data.filter((item) => item['Multi'] !== 'Yes').length
     let nCountry = 1
     if (!single) {
@@ -196,8 +195,8 @@ function getTally(a, b, col){
 }
 
 export function Graphic({ data, param, setParam, single=false }){
-    const dataInt = data.filter((item) => item['Evaluator'] === 'CIFF')
-    const dataExt = data.filter((item) => item['Evaluator'] !== 'CIFF')
+    const dataInt = data.filter((item) => item['Sponsor'] === 'CIFF')
+    const dataExt = data.filter((item) => item['Sponsor'] !== 'CIFF')
 
     const tallySector = getTally(dataInt, dataExt, 'Sector')
     

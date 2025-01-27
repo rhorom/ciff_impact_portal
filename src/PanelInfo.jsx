@@ -177,9 +177,18 @@ export function InfoPanel({ data, param, setParam }) {
     return (
     <div className='p-0 m-0'>
         <Accordion defaultActiveKey='summary' flush>
+            <Accordion.Item eventKey='summary'>
+                <Accordion.Header>
+                    <b>{param.country} evaluation insights</b>
+                </Accordion.Header>
+                <Accordion.Body>
+                <Graphic data={data} param={param} setParam={setParam} single={true}/>
+                </Accordion.Body>
+            </Accordion.Item>
+
             <Accordion.Item eventKey='list'>
                 <Accordion.Header>
-                    <b>List of Evaluation{n > 1 ? 's' : ''} in {param.country}</b>
+                    <b>Details of evaluation in {param.country}</b>
                 </Accordion.Header>
                 <Accordion.Body>
                     <div id='list-info'>
@@ -187,15 +196,6 @@ export function InfoPanel({ data, param, setParam }) {
                             return <EvalItem obj={item} key={i} func={setShowModal}/>
                         })}
                     </div>
-                </Accordion.Body>
-            </Accordion.Item>
-
-            <Accordion.Item eventKey='summary'>
-                <Accordion.Header>
-                    <b>Summary of Evaluation{n > 1 ? 's' : ''} in {param.country}</b>
-                </Accordion.Header>
-                <Accordion.Body>
-                <Graphic data={data} param={param} setParam={setParam} single={true}/>
                 </Accordion.Body>
             </Accordion.Item>
         </Accordion>

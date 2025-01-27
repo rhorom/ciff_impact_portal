@@ -208,13 +208,6 @@ To modify the content of this file, just edit the value according to the rules s
 
 ![detail](public/detail-info.PNG)
 
-## Content update
-### Pages
-Contents on 'About' and 'Guide' are defined in `src/Pages.jsx`. Then, any update on any of those pages can be conducted by modifying the source file.
-
-### Images
-As stated above, image files are stored in `./public/` directory, including icons for visual summary of the listed evaluations.s
-
 ## Development setup
 1. Install [Node.js](https://nodejs.org/en/download/) and [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm).
 
@@ -250,3 +243,10 @@ As stated above, image files are stored in `./public/` directory, including icon
 1. App preview: ```npm run preview```
     
 1. Deploy as a github page:```npm run deploy```
+
+## Content update
+### Pages
+Contents on 'About' and 'Guide' are defined in `src/Pages.jsx`. Then, any update on any of those pages can be conducted by modifying the source file.
+
+### Images
+As stated above, image files are stored in `./public/` directory, including icons for visual summary of the listed evaluations.s
