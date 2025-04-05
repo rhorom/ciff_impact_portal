@@ -13,6 +13,7 @@ import logo from '/logo-lg.png'
 
 import { MainApp } from './MainApp.jsx'
 import { About, Procedure, Glossary } from './Pages.jsx'
+import { Edit } from './Edit.jsx'
 import { Evaluation } from './Evaluation.jsx'
 
 function modalContent(val){
@@ -82,6 +83,7 @@ export default function App() {
       <Routes>
         <Route path='/' element={<Layout />} exact>
           <Route index element={<MainApp />}/>
+          <Route path='edit' element={<Edit />}/>
           <Route path='about' element={<About/>}/>
           <Route path='sop' element={<Procedure/>}/>
           <Route path='glossary' element={<Glossary/>}/>

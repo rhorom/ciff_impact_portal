@@ -12,17 +12,22 @@ const init = {center:[0,10], zoom:4}
 let main_map
 
 export function MapSmall({ data }){
-    const countries = data.Country.split(', ')
-    let points = [];
-    if (data.Coord !== ''){
-        const obj = JSON.parse(data.Coord.replace(/'/g, '"'));
-        points = Object.values(obj).flat()
+    let countries = []
+    let points = []
+
+    if (typeof data.Country === 'string') {
+        countries = data.Country.replaceAll(', ',',').split(',')
+    } else {
+        countries = data.Country
+    }
+    
+    if (data.Coordinate !== ''){
+        points = data.Coordinate
     }
 
-    let regions = data.Region.replace(/'/g, '"')
-    if (regions) {
-        const obj = JSON.parse(regions)
-        regions = Object.values(obj).flat()
+    let regions = []
+    if (data.Region !== '') {
+        regions = data.Region
     }
 
     const countryBoundary = boundary.features.filter((item) => {

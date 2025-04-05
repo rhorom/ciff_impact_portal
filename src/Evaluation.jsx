@@ -11,8 +11,8 @@ import table from './data/impact_table.json';
 export function Evaluation() {
     let location = useLocation()
     const path = location.pathname.split('/')[2].split('-')
-
-    const obj = table.filter((row) => row['EvaluationID'] === Number(path[0]))
+    const obj = table.filter((row) => row['EvaluationID'] === path[0])
+    console.log(obj)
     return (
         <div>
             {obj.length > 0 ? (

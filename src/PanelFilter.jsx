@@ -30,7 +30,13 @@ export function FilterPanel({ data, cols, param, setParam }) {
               Object.keys(cols).map((c, i) => {
                 const col = columns[c]
                 let options = []
-                data.forEach((item) => {options.push(item[col].split(', '))})
+                data.forEach((item) => {
+                  if (typeof item[col] === 'string'){
+                    options.push(item[col].replaceAll(', ',',').split(','))
+                  } else {
+                    options.push(item[col])
+                  }
+                })
                 options = options.flat().filter(onlyUnique).sort()
 
                 return (

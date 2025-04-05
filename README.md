@@ -1,8 +1,7 @@
 # Impact Evaluation Portal
+by Rhorom Priyatikanto (rp1y21@soton.ac.uk)
 
 ![webapp](public/webApp.PNG)
-
----
 
 To support impact evaluation performed by [Children Investment Fund Foundation (CIFF)](https://ciff.org), we developed a web application portal that includes an interactive map and data filtering. The portal acts as a showcase of investments/evaluations by CIFF happening in several countries around the Globe. It displays evaluations at both country- and subnational-level. Following the richness of information related to the listed investments/evaluations, dynamic overlays of the data on the map is implemented so that those information can be grasped easily.
 
@@ -11,6 +10,7 @@ To support impact evaluation performed by [Children Investment Fund Foundation (
 | Customer | CIFF (Children Investment Fund Foundation) |
 | Project lead | Carla Pezzulo |
 | Development Team | Rhorom Priyatikanto, Maksym Bondarenko |
+| | [SDI Worldpop, University of Southampton](https://sdi.worldpop.org) |
 | Repository | https://rhorom.github.com/ciff_impact_portal |
 | Web URL | https://rhorom.github.io/ciff_impact_portal |
 | | https://impact.ciff.org |
@@ -30,11 +30,12 @@ Note : Any dependencies added/modified to this project which affect the running 
 - [Data structure and update](#data-structure-and-update)
     - [Boundary file](#boundary-file-srcdataboundaryjson)
     - [Impact table](#impact-table-srcdataimpact_tablejson)
+- [Development setup](#development-setup)
+- [Deployment setup](#deployment-setup)
 - [Content update](#content-update)
     - [Pages](#pages)
     - [Images](#images)
-- [Development setup](#development-setup)
-- [Deployment setup](#deployment-setup)
+    - [Miscellaneous cases](#miscellaneous-cases)
 
 ## Features
 Several functionalities are activated to ensure interactivity, informativeness, and efficacy of the portal. Firstly, the main functionality is intuitive filters to narrow down displayed evaluations based on various criteria (country, sector, target population, primary outcome, and evaluation status). Secondly, listing programmes associated with a selected country. Form-based filtering is linked to the map so that country selection can be performed through clicking a particular country on the map or selection through form. In case of multi-country investment/evaluation, all countries relevant to the programme can be displayed on the map. Lastly, more extensive information (programme description, implementation years, results, etc.) for a particular programme can also be showcased in a neat format.
@@ -250,3 +251,38 @@ Contents on 'About' and 'Guide' are defined in `src/Pages.jsx`. Then, any update
 
 ### Images
 As stated above, image files are stored in `./public/` directory, including icons for visual summary of the listed evaluations.s
+
+### Miscellaneous cases
+1. **Changing fields for filtering**. Go to `./src/config.jsx` and modify `columns` object. Object keys represent the short names of the fields. Object values should be consistent to the keys in `./src/data/impact_table.json`.
+    ```js
+    export const columns = {
+        'country':'Country', 
+        'sector':'Sector', 
+        'population':'Target Population', 
+        'outcome':'Primary Outcome', 
+        'status':'Status', 
+        'sponsor':'Sponsor'
+        } 
+    ```
+
+1. **Changing sector classes**. In the current version, the evaluations are categorised into 7 sectors (from agriculture to WASH). This categorisation can be modified in the future. In addition to the changes on the records stored in `./src/data/impact_table.json`, `iconMapper` object in `./src/config.jsx` should also be modified accordingly. This object maps the sector name to the associated icon that is kept in `./public/`.
+    ```js
+    export const iconMapper = {
+        'Agriculture': './icon-agriculture.png',
+        'Maternal Health': './icon-maternal.png',
+        'NTDs': './icon-ntds.png',
+        'Newborn Health': './icon-newborn.png',
+        'Nutrition': './icon-nutrition.png',
+        'Performance Management': './icon-management.png',    
+        'WASH': './icon-wash.png'
+    }
+    ```
+
+1. **Adding new evaluations**. Please go to [Data structure and update](#data-structure-and-update) section.
+
+1. **Modifying information to display**. In `./src/config.jsx` there are constants defining information shown on the Info Panel on the right side of the portal and on the Detail Information:
+    - `shortContent`: information to display on the country specific list of evaluations.
+    - `midContent`: information to show on the right side of the Detail Info panel.
+    - `longContent`: more extended information to show below the evaluation-specific map.
+
+    Beside these constants, some fields like `Regions` and `Publisher results` are specifically defined in `./src/PanelInfo.jsx`.

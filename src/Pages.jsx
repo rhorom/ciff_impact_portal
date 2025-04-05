@@ -2,6 +2,7 @@ import glossary from './data/glossary.json'
 import 'primeicons/primeicons.css'
 import { Badge, Table, Form, FloatingLabel, Button } from 'react-bootstrap'
 import { basemaps } from './config'
+import { columns } from './config'
 
 export function About () {
     return (
@@ -31,6 +32,9 @@ export function About () {
 }
 
 export function Procedure () {
+    const cols = Object.values(columns)
+    let text = cols.slice(0,-1).map((item, i) => {return <span key={i}><b>{item}</b>, </span>})
+    text.push(<span key={99}>and/or <b>{cols[cols.length - 1]}</b></span>)
     return (
         <div>
             <ul>
@@ -43,7 +47,7 @@ export function Procedure () {
             {/*<li>Data or publication related to some completed investments can be accessed by clicking <Badge pill size='sm'>Link to Data</Badge>.</li>*/}
             </ul>
             </li>
-            <li>Filtering by <b>Country</b>, <b>Sector</b>, <b>Target Population</b>, <b>Primary Outcome</b>, <b>Status</b> and/or <b>Evaluator</b> can also be done using the top panel.</li>
+            <li>Filtering by {text} can also be done using the top panel.</li>
             <li>Click <kbd><i className='pi pi-undo'/> Reset</kbd> to clear/reset the filter. Double click on the map will also reset the state.</li>
             {/*<li>Click <span className='pi pi-cog'></span> to perform additional setting to the map, such as toggle country labels, map scale, and auto-zoom functionality.</li>*/}
             </ul>

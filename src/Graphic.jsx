@@ -27,7 +27,7 @@ function BarSector({ tally, param_, setParam_ }){
     let bars = []
     const width = document.documentElement.clientWidth < 1080 ? 200 : 250
     
-    Object.keys(tally).forEach((k) => {nt = Math.max(nt, tally[k][0] + tally[k][1])})
+    Object.keys(tally).forEach((k) => {nt = Math.max(nt, tally[k][0])})
     Object.keys(tally).forEach((k) => {
         bars.push(
             <Button key={k} variant='light' className='m-0 p-0' title='Select sector' onClick={() => selectSector(k)}>
@@ -36,8 +36,8 @@ function BarSector({ tally, param_, setParam_ }){
             <Stack direction='horizontal' gap={1}>
                 <Image src={iconMapper[k]} height='30px' roundedCircle/>
                 <div style={{textAlign:'left'}}>
-                    <div style={{fontSize:'x-small', marginBottom:'-0.5em'}}><b>{k}</b> | {tally[k][0]+tally[k][1]} evaluation{nt>1?'s':''}</div>
-                    {Bar(tally[k][0], tally[k][1], nt, [' int',' ext'], ['#e9546e','#189cac'], width)}
+                    <div style={{fontSize:'x-small', marginBottom:'-0.5em'}}><b>{k}</b> | {tally[k][0]} evaluation{tally[k][0]>1?'s':''}</div>
+                    {Bar(tally[k][0], 0, nt, [' ',' ext'], ['#e9546e','#189cac'], width)}
                 </div>
             </Stack>
             </div>
@@ -47,6 +47,39 @@ function BarSector({ tally, param_, setParam_ }){
     })
     return <div className='mt-4 p-2 border border-danger rounded-2'>
         <div style={{marginTop:'-20px'}}><kbd><b>By Sector</b></kbd></div>
+        <div>{bars}</div>
+        </div>
+}
+
+function BarFunder({ tally, param_, setParam_ }){
+    function selectSector(e){
+        setParam_({...param_, funder:e})
+        //console.log(e)
+    }
+
+    let nt = 1
+    let bars = []
+    const width = document.documentElement.clientWidth < 1080 ? 200 : 250
+    
+    Object.keys(tally).forEach((k) => {nt = Math.max(nt, tally[k][0])})
+    Object.keys(tally).forEach((k) => {
+        bars.push(
+            <Button key={k} variant='light' className='m-0 p-0' title='Select sector' onClick={() => selectSector(k)}>
+            <div className='m-0'>
+            <div className='m-0 p-0'>
+            <Stack direction='horizontal' gap={1}>
+                <div style={{textAlign:'left'}}>
+                    <div style={{fontSize:'x-small', marginBottom:'-0.5em'}}><b>{k}</b> | {tally[k][0]} evaluation{tally[k][0]>1?'s':''}</div>
+                    {Bar(0, tally[k][0], nt, [' ',' '], ['#e9546e','#189cac'], width)}
+                </div>
+            </Stack>
+            </div>
+            </div>
+            </Button>
+        )
+    })
+    return <div className='mt-4 p-2 border border-success rounded-2'>
+        <div style={{marginTop:'-20px'}}><kbd style={{background:'#189cac'}}><b>By Funder</b></kbd></div>
         <div>{bars}</div>
         </div>
 }
@@ -85,50 +118,14 @@ function BarStatus({ tally }){
     </div>
 }
 
-function BarStatusX({ tally }){
-    const nt1 = (tally['Completed'][0] + tally['On-going'][0])
-    const nt2 = (tally['Completed'][1] + tally['On-going'][1])
-    const p1 = (10*tally['On-going'][0]/nt1).toFixed(0)
-    const p2 = (10*tally['On-going'][1]/nt2).toFixed(0)
-
-    const checks = (
-    <div className='mt-1 px-1'>
-        {nt1 > 0 ? (<div>
-        <div style={{fontSize:'x-small'}}><b>
-            Internal evaluations</b>
-            {tally['Completed'][0] > 0 ? ` | ${tally['Completed'][0]} complete` : ''}
-            {tally['On-going'][0] > 0 ? ` | ${tally['On-going'][0]} on-going` : ''}
-        </div>
-        <Stack direction='horizontal'>
-            {[...Array(Number(10-p1)).keys()].map((x) => {return <h5 key={x} className='bg-success text-light p-1 pb-0'><i className='pi pi-check-circle'/></h5>})}
-            {[...Array(Number(p1)).keys()].map((x) => {return <h5 key={x} className='bg-info text-light p-1 pb-0'><i className='pi pi-circle'/></h5>})}
-        </Stack>
-        </div>) : <></>}
-
-        {nt2 > 0 ? (<div>
-        <div style={{fontSize:'x-small'}}><b>
-            External evaluations</b>
-            {tally['Completed'][1] > 0 ? ` | ${tally['Completed'][1]} complete` : ''}
-            {tally['On-going'][1] > 0 ? ` | ${tally['On-going'][1]} on-going` : ''}
-        </div>
-        <Stack direction='horizontal'>
-            {[...Array(Number(10-p2)).keys()].map((x) => {return <h5 key={x} className='bg-success text-light p-1 pb-0'><i className='pi pi-check-circle'/></h5>})}
-            {[...Array(Number(p2)).keys()].map((x) => {return <h5 key={x} className='bg-info text-light p-1 pb-0'><i className='pi pi-circle'/></h5>})}
-        </Stack>
-        </div>) : <></>}
-
-    </div>)
-
-    return <div className='mt-4 p-1 border border-danger rounded-2'>
-        <div style={{marginTop:'-20px'}}><kbd><b>By Status</b></kbd></div>
-        {checks}
-    </div>
-}
-
 function Numbers({ data, single=false}){
-    const nInt = data.filter((item) => item['Sponsor'] === 'CIFF').length
-    const nExt = data.filter((item) => item['Sponsor'] !== 'CIFF').length
-    const nMulti = data.filter((item) => item['Multi'] !== 'Yes').length
+    const nMulti = data.filter((item) => item['Multi']).length
+    const nCompleted = data.filter((item) => item['Status'] === 'Completed').length
+    const nOnGoing = data.filter((item) => item['Status'] === 'On-going').length
+    const years = data.map((item) => {return item['Years of Investment'].replaceAll(', ',',').split(',')}).flat()
+    const y1 = Math.min(...years)
+    const y2 = Math.max(...years)
+
     let nCountry = 1
     if (!single) {
         const countryTally = getTally(data, data, 'Country')
@@ -142,18 +139,13 @@ function Numbers({ data, single=false}){
                 <div>evaluation{data.length > 1 ? 's' : ''}</div>
             </div>
             <div style={{fontSize:'smaller'}}>
-                {nInt > 0 ? 
                 <Stack direction='horizontal' className='my-1'>
-                    <div className='bg-danger border border-danger text-light px-1'><b>{nInt}</b></div>
-                    <div className='border border-danger text-danger px-1'>internal evaluations</div>
+                    <div className='border border-secondary text-secondary px-1'>from</div>
+                    <div className='bg-secondary border border-secondary text-light px-1'><b>{y1}</b></div>
+                    <div className='border border-secondary text-secondary px-1'>to</div>
+                    <div className='bg-secondary border border-secondary text-light px-1'><b>{y2}</b></div>
                 </Stack>
-                : <></>}
-                {nExt > 0 ? 
-                <Stack direction='horizontal' className='my-1'>
-                    <div className='bg-info border border-info text-light px-1'><b>{nExt}</b></div>
-                    <div className='border border-info text-info px-1'>external evaluations</div>
-                </Stack>
-                : <></>}
+
                 {nCountry > 0 ? 
                 <Stack direction='horizontal' className='my-1'>
                     <div className='bg-warning border border-warning text-light px-1'><b>{nCountry}</b></div>
@@ -166,6 +158,18 @@ function Numbers({ data, single=false}){
                     <div className='border border-primary text-primary px-1'>multi-country</div>
                 </Stack>
                 : <></>}
+                {nCompleted > 0 ? 
+                <Stack direction='horizontal' className='my-1'>
+                    <div className='bg-success border border-success text-light px-1'><b>{nCompleted}</b></div>
+                    <div className='border border-success text-success px-1'>completed</div>
+                </Stack>
+                : <></>}
+                {nOnGoing > 0 ? 
+                <Stack direction='horizontal' className='my-1'>
+                    <div className='bg-info border border-info text-light px-1'><b>{nOnGoing}</b></div>
+                    <div className='border border-info text-info px-1'>on-going</div>
+                </Stack>
+                : <></>}    
             </div>
         </Stack>
 
@@ -173,9 +177,13 @@ function Numbers({ data, single=false}){
 }
 
 function getTally(a, b, col){
-    const ca = countOccurrence(a.map((item) => item[col].split(', ')).flat())
-    const cb = countOccurrence(b.map((item) => item[col].split(', ')).flat())
-    
+    const ca = countOccurrence(a.map((item) => {
+        if (typeof item[col] === 'string') {return item[col].replaceAll(', ',',').split(',')} else {return item[col]}
+    }).flat())
+    const cb = countOccurrence(b.map((item) => {
+        if (typeof item[col] === 'string') {return item[col].replaceAll(', ',',').split(',')} else {return item[col]}
+    }).flat())
+
     const ka = Object.keys(ca)
     const kb = Object.keys(cb)
 
@@ -195,28 +203,19 @@ function getTally(a, b, col){
 }
 
 export function Graphic({ data, param, setParam, single=false }){
-    const dataInt = data.filter((item) => item['Sponsor'] === 'CIFF')
-    const dataExt = data.filter((item) => item['Sponsor'] !== 'CIFF')
+    const tallySector = getTally(data, data, 'Sector')
+    const tallyFunder = getTally(data, data, 'Funder')
 
-    const tallySector = getTally(dataInt, dataExt, 'Sector')
-    
-    {/*
-    let tallyStatus = getTally(dataInt, dataExt, 'Status')
-    if (!('Completed' in tallyStatus)) {
-        tallyStatus['Completed'] = [0,0]
-    }
-    if (!('On-going' in tallyStatus)) {
-        tallyStatus['On-going'] = [0,0]
-    }
-    */}
-
-    const sectors = useMemo(() => {
-        return <BarSector tally={tallySector} param_={param} setParam_={setParam}/>
+    const bars = useMemo(() => {
+        return <>
+            <BarSector tally={tallySector} param_={param} setParam_={setParam}/>
+            <BarFunder tally={tallyFunder} param_={param} setParam_={setParam}/>
+            </>
     }, [tallySector, param])
 
     return <div id='infographic'>
         <Numbers data={data} single={single}/>
-        {sectors}
+        {bars}
         {/*<BarStatus tally={tallyStatus}/>*/}
     </div>
 }

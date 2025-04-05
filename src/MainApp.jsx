@@ -17,20 +17,14 @@ export function MainApp(){
     let [filter, setFilter] = useQueryParam('filter')
 
     if (!filter){
-      filter = {
-        country: '',
-        sector: '',
-        population: '',
-        outcome: '',
-        status: '',
-        evaluator: '',
-      }
+      filter = {}
+      Object.keys(columns).forEach((k) => {filter[k] = ''})
     }
 
     const filteredTable = useMemo(() => {
       return filterData(table, columns, filter)
     }, [filter])
-  
+
     const theFilter = useMemo(() => {
       return <FilterPanel data={filteredTable} cols={columns} param={filter} setParam={setFilter}/>
     }, [filter])

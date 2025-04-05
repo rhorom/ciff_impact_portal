@@ -9,7 +9,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import 'leaflet/dist/leaflet.css'
 import './index.css'
 
-import { iconMapper, shortContent, longContent, midContent } from './config'
+import { iconMapper, shortContent, longContent, midContent, regionList } from './config'
 import { MapSmall } from './MapSmall';
 import { Graphic } from './Graphic';
 
@@ -33,6 +33,10 @@ function Chvr(){return <i className='pi pi-circle mx-1'/>}
 
 function EvalItem({ obj, func }){
     const sector = obj["Sector"].split(", ")[0]
+    const years = obj['Years of Investment'].replaceAll(', ',',').split(',')
+    const y1 = Math.min(...years)
+    const y2 = Math.max(...years)
+
     return (
     <div className='mb-1'>
         <Card bg='warning-subtle'>
@@ -61,10 +65,10 @@ function EvalItem({ obj, func }){
             <Card.Footer>
                 <Stack direction='horizontal' gap={1}>
                     <div>
-                        <span className='pill'><Badge pill bg='secondary'>{obj["Years of Investment"]}</Badge></span>
+                        <span className='pill'><Badge pill bg='secondary'>{y1} to {y2}</Badge></span>
                         {obj["Status"] === "On-going" ? <OnGoing/> : <Completed/>}
-                        {obj["Multi"] === "No" ? <></> : <Multi/>}
-                        {obj["Coord"] === "" ? <></> : <Geoloc/>}
+                        {obj["Multi"] ? <Multi/> : <></>}
+                        {obj["Coordinate"] === "" ? <></> : <Geoloc/>}
                     </div>
                     <div className='ms-auto'>
                         <Button size='sm' variant='danger' title='Click to see more' onClick={() => func([true, obj])}><i className='pi pi-file-export'/> Detail</Button>
@@ -77,9 +81,14 @@ function EvalItem({ obj, func }){
 }
 
 export function DetailInfo({ obj }){
-    let regions = ''
+    const years = obj['Years of Investment'].replaceAll(', ',',').split(',')
+    const y1 = Math.min(...years)
+    const y2 = Math.max(...years)
+
+    let regions = {}
     if (obj['Region']) {
-        regions = JSON.parse(obj['Region'].replace(/'/g, '"'))
+        regionList.filter((item) => {return obj.Region.includes(item.Region)})
+            .forEach((item) => {if (regions[item.Country]){regions[item.Country].push(item.Region)} else {regions[item.Country] = [item.Region]}})
     }
     
     return <div className='row px-2'>
@@ -93,8 +102,14 @@ export function DetailInfo({ obj }){
             </div>
             <div className='short-content'>
                 {shortContent.map((item, i) => {
-                    const values = obj[item].split(", ")
+                    let values = []                    
                     if (obj[item]){
+                        if (typeof obj[item] === 'string'){
+                            values = obj[item].replaceAll(', ',',').split(',')
+                        } else {
+                            values = obj[item]
+                        }
+
                         return (
                         <span key={'med'+i}>
                             <h6 className='mt-2'><kbd>{item}</kbd></h6>
@@ -108,10 +123,10 @@ export function DetailInfo({ obj }){
             </div>
 
             <div className='short-content'>
-                {obj['Link'] !== '' ? (<div>
+                {obj['Link to Publication'] !== '' ? (<div>
                     <h6 className='mt-2'><kbd>Published results</kbd></h6>
                     <span><Chvr/>Link to external source </span>
-                    <a href={obj['Link']} target='_blank' rel="noreferrer"><span className='pi pi-external-link'></span></a><br/>
+                    <a href={obj['Link to Publication']} target='_blank' rel="noreferrer"><span className='pi pi-external-link'></span></a><br/>
                 </div>) : <></>}
             </div>
 
@@ -125,10 +140,10 @@ export function DetailInfo({ obj }){
             </div>
             
             <Stack direction='horizontal' gap={1} className='my-2'>
-                <span className='pill'><Badge pill bg='secondary'>{obj["Years of Investment"]}</Badge></span>
+                <span className='pill'><Badge pill bg='secondary'>{y1} to {y2}</Badge></span>
                 {obj["Status"] === "On-going" ? <OnGoing/> : <Completed/>}
-                {obj["Multi"] === "No" ? <></> : <Multi/>}
-                {obj["Coord"] === "" ? <></> : <Geoloc/>}
+                {obj["Multi"] ? <Multi/> : <></>}
+                {obj["Coordinate"] === "" ? <></> : <Geoloc/>}
             </Stack>
             <hr/>
             
@@ -141,7 +156,7 @@ export function DetailInfo({ obj }){
                         <h6><kbd>Region</kbd></h6>
                         {
                             Object.keys(regions).map((item, i) => {
-                                return <span key={i}><Chvr/><b>{item}</b>: {regions[item].join(", ")}<br/></span>
+                                return <span key={i}><Chvr/><b>{item}</b>: {regions[item].join(', ')}<br/></span>
                             })
                         }
                     </span>
@@ -160,7 +175,6 @@ export function DetailInfo({ obj }){
                 }
                 })}
             </div>
-
         </div>
 
     </div>

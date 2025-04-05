@@ -28,7 +28,8 @@ export function filterData(data, cols, param){
     let yes = true;
     
     Object.keys(cols).forEach((c) => {
-      const included = row[cols[c]].split(', ').includes(param[c]);
+      const val = typeof row[cols[c]] === 'string' ? row[cols[c]].replaceAll(', ',',').split(',') : row[cols[c]]
+      const included = val.includes(param[c]);
       const add = param[c] ? included : true;
       yes = yes && add;
     })

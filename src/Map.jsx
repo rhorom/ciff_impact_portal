@@ -19,38 +19,29 @@ let main_map
 //const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0)
 //const height = vw < 576 ? '60vh' : '100vh'
 
-export function Map({ data, param, setParam }){  
-    let countryInt = data.filter((item) => item['Sponsor'] === 'CIFF')
-        .map((item) => item.Country.split(', '))
-        .flat()
-    let countryExt = data.filter((item) => item['Sponsor'] !== 'CIFF')
-        .map((item) => item.Country.split(', '))
-        .flat()
+export function Map({ data, param, setParam }){
+    var countries = data.map((item) => {
+        if (typeof item.Country === 'string'){
+            return item.Country.replaceAll(', ',',').split(',')
+        } else {
+            return item.Country
+        }
+    }).flat()
 
-    const countInt = countOccurrence(countryInt)
-    const countExt = countOccurrence(countryExt)
-    
+    const countCountry = countOccurrence(countries)
+
     if (param.country) {
-        countryInt = countryInt.includes(param.country) ? [param.country] : []
-        countryExt = countryExt.includes(param.country) ? [param.country] : []
+        countries = countries.includes(param.country) ? [param.country] : []
     }
 
     const countryBoundary = useMemo(() => {
-        let features = boundary.features.filter((item) => {
-            const selected = item.properties.Level === 'ADM_0'
-                && ((countryInt.includes(item.properties.Country))
-                || (countryExt.includes(item.properties.Country)))
-            return selected;
-        })
-
+        let features = boundary.features.filter((item) => {return (item.properties.Level === 'ADM_0') && (countries.includes(item.properties.Country))})
         features.forEach((feature) => {
-            feature.properties['countInt'] = countInt[feature.properties.Country]
-            feature.properties['countExt'] = countExt[feature.properties.Country]
+            feature.properties['count'] = countCountry[feature.properties.Country]
             feature.param = param
         })
-
         return features
-    }, [countryInt, countExt])
+    }, [countries, countCountry, param])
 
     const refCountry = useRef()
     const refOverlay = useRef()
@@ -158,13 +149,11 @@ export function Map({ data, param, setParam }){
     function countryStyle(feature){
         let idx = 0
         const colors = ['#ffbd00', '#e90051', '#189cac', '#ffbd00']
-        if (feature.properties.countInt > 0){idx += 1}
-        if (feature.properties.countExt > 0){idx += 2}
         
         return {
             opacity: 1,
-            color: colors[idx],
-            fillColor: colors[idx],
+            color: colors[0],
+            fillColor: colors[0],
             weight: 1
         }
     }
@@ -174,8 +163,7 @@ export function Map({ data, param, setParam }){
             <Stack direction='horizontal' gap={0}>
             <CircleFlag countryCode={obj.CountryISO} height={20}/>
             <div className='m-0 p-0'>
-                {obj.countInt > 0 ? <Badge bg='danger' text='light'>{obj.countInt} int</Badge> : <></>}
-                {obj.countExt > 0 ? <Badge bg='info' text='dark'>{obj.countExt} ext</Badge> : <></>}
+                <Badge bg='danger' text='light'>{obj.count}</Badge>
             </div>
             </Stack>
         )
@@ -201,8 +189,9 @@ export function Map({ data, param, setParam }){
     }, [countryBoundary])
 
     const theLegend = useMemo(() => {
-        return <Legend countInt={countInt} countExt={countExt}/>
-    }, [countInt, countExt])
+        //return <Legend countInt={countInt} countExt={countExt}/>
+        return <></>
+    }, [])
 
     function onEachCountry(feature, layer){
         const info = document.getElementById('info')
@@ -210,7 +199,7 @@ export function Map({ data, param, setParam }){
             mouseover: function(e){
                 layer.setStyle({weight:4})
                 const prop = e.target.feature.properties
-                info.innerHTML = `Country: <b>${prop.Country}</b>`
+                info.innerHTML = `Country: <b>${prop.Country}</b> (${prop.count} evaluation${prop.count > 1 ? 's' : ''})`
             },
             mouseout: function(e){
                 layer.setStyle({weight:1})
