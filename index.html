@@ -11,20 +11,16 @@
     <link rel="stylesheet" crossorigin href="./assets/index-BVG1oMVo.css">
   </head>
   <body>
-    <div id="root"></div>
-    <script language="javascript" type="text/javascript">
-      var style = document.createElement('style');
-      style.type = "text/css";
-      style.id = "antiClickjack";
-      style.innerHTML = "body{display:none !important;}";
-      document.head.appendChild(style);
- 
-      if (self === top) {
-          var antiClickjack = document.getElementById("antiClickjack");
-          antiClickjack.parentNode.removeChild(antiClickjack);
-      } else {
-          top.location = self.location;
-      }
-    </script>
+    <div id="root"></div>
   </body>
+  <style>
+    html { display : none; }
+  </style>
+  <script>
+    if (self == top) {
+      document.documentElement.style.display = 'block';
+    } else {
+      top.location = self.location;
+    }
+  </script>
 </html>
