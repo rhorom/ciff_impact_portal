@@ -7,10 +7,24 @@
     <link rel="icon" type="image/svg+xml" href="./favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CIFF Impact Evaluation Portal</title>
-    <script type="module" crossorigin src="./assets/index-DcRFjDu4.js"></script>
+    <script type="module" crossorigin src="./assets/index-CYWhp3PI.js"></script>
     <link rel="stylesheet" crossorigin href="./assets/index-BVG1oMVo.css">
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root"></div>
+    <script language="javascript" type="text/javascript">
+      var style = document.createElement('style');
+      style.type = "text/css";
+      style.id = "antiClickjack";
+      style.innerHTML = "body{display:none !important;}";
+      document.head.appendChild(style);
+ 
+      if (self === top) {
+          var antiClickjack = document.getElementById("antiClickjack");
+          antiClickjack.parentNode.removeChild(antiClickjack);
+      } else {
+          top.location = self.location;
+      }
+    </script>
   </body>
 </html>
