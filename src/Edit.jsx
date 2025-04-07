@@ -1,10 +1,8 @@
-import { useMemo, useState } from 'react';
-import { Button, Form, InputGroup, Col, Row, Table } from 'react-bootstrap';
+import { Accordion, Button, Form, InputGroup, Col, Row } from 'react-bootstrap';
 import { Formik } from 'formik';
 import { DefaultEditor } from 'react-simple-wysiwyg';
 import 'primeicons/primeicons.css'
 
-import boundary from './data/boundary.json'
 import table from './data/impact_table.json';
 import { fields, regionList } from './config';
 
@@ -32,6 +30,7 @@ function restructure(obj){
     }
     return exportObj
 }
+
 function downloadObjectAsJson(exportObj, exportName){
     var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObj));
     var downloadAnchorNode = document.createElement('a');
@@ -58,42 +57,46 @@ function labelInfo(obj){
     const info = (obj['info'] === '') ? <></> : <i className='pi pi-info-circle' title={obj['info']}/>
     return <span>{obj['title']} {info}</span>
 }
-function ListEvaluations({func}){
-    var items = [];
 
-    table.forEach((row,i) => {
-        items.push(<tr key={i}>
-            <td>
-                <Button variant='outline-danger' size='sm' onClick={()=>{func(row['EvaluationID'])}}>Edit</Button>
-            </td>
-            <td>{row['Proposed Public Title']}</td>
-        </tr>)
+function Evaluations({data}){
+    var items = []
+    data.forEach((item, i) => {
+        const id = item['EvaluationID']
+        var init = {};
+        const data = table.filter((item) => {return item.EvaluationID === id})
+        Object.keys(fields).forEach((k)=>{init[k] = data[0][fields[k]['title']]})
+
+        items.push(<Accordion.Item key={i} eventKey={i}>
+            <Accordion.Header>{item['Proposed Public Title']}</Accordion.Header>
+            <Accordion.Body>
+                <TheForm id={id} initialValues={init}/>
+            </Accordion.Body>
+        </Accordion.Item>)
     })
-    
-    return <div className='px-2' style={{maxHeight:'200px', overflowY:'auto'}}>
-        <Table striped responsive size='sm'>
-            <tbody>
-                <tr>
-                    <td>
-                        <Button variant='danger' size='sm' onClick={()=>{func(-1)}}>Create</Button>
-                    </td>
-                    <td>Create a new entry</td>
-                </tr>
-                {items}
-            </tbody>
-        </Table>
+    return <div className='p-2'>
+        <Accordion>
+        {items}
+        </Accordion>
     </div>
 }
 
-function TheForm({ id }) {
-    var initialValues = {};
-    if (id > 0){
-        const data = table.filter((item) => {return item.EvaluationID === id})
-        Object.keys(fields).forEach((k)=>{initialValues[k] = data[0][fields[k]['title']]})
-    } else {
-        Object.keys(fields).forEach((k)=>{initialValues[k] = fields[k]['default']})
-    }
+function AddNew({}){
+    const id = -1
+    var init = {}
+    Object.keys(fields).forEach((k)=>{init[k] = fields[k]['default']})
 
+    return <div className='p-2'><Accordion>
+        <Accordion.Item eventKey='new'>
+            <Accordion.Header>Empty Form</Accordion.Header>
+            <Accordion.Body>
+                <TheForm id={id} initialValues={init}/>
+            </Accordion.Body>
+        </Accordion.Item>
+    </Accordion>
+    </div>
+}
+
+function TheForm({ id, initialValues }) {
     return (
         <Formik
         onSubmit={(values) => {downloadObjectAsJson(restructure(values), 'impact_table_new')}}
@@ -186,23 +189,13 @@ function TheForm({ id }) {
 }
 
 export function Edit(){
-    const [id, setId] = useState();
-    const theForm = useMemo(() => {
-        return <TheForm id={id}/>
-    }, [id])
-
     return <div>
         <div className='border border-warning'>
-            <h5 className='p-2 bg-danger text-light'>List of Evaluations</h5>
-            <ListEvaluations func={setId} />
+            <h5 className='p-2 bg-danger text-light'>Create New Entry</h5>
+            <AddNew/>
+            <hr/>
+            <h5 className='p-2 bg-danger text-light'>Existing Evaluations</h5>
+            <Evaluations data={table}/>
         </div>
-
-        {id ?
-        <div className='mt-3 border border-warning'>
-            <h5 className='p-2 bg-danger text-light'>Editor</h5>
-            <div className='m-0 p-2'>
-                {theForm}
-            </div>
-        </div> : <></>}
     </div>
 }

@@ -53,6 +53,8 @@ This portal mainly depends on the following javascript libraries:
 - [Primeicons 6.0.1](https://primeng.org) as icons library
 - [Html-react-parser 5.0.11](https://www.npmjs.com/package/html-react-parser) for parsing text with HTML-format
 - [React-circle-flags 0.0.23](https://www.npmjs.com/package/react-circle-flags) for visualisation
+- [Formik 2.4.6](https://formik.org) for handling forms
+- [React-simple-wysiwyg 3.2.2](https://www.npmjs.com/package/react-simple-wysiwyg) for WYSIWYG editor
 
 ## Architecture
 CIFF Impact Evaluation Portal aims to display and map the investments by CIFF all over the world and the associated impacts. Users can interact with the portal by filtering the data and selecting the country of interest where CIFF investments and evaluations exist. This portal is based on React. It has a responsive design that enables users to access the portal using various devices. Seamless integration of the portal to the main CIFF website became a major consideration in the portal design and development. It uses the standard CIFF color scheme as in the main CIFF website. Its architecture and data structure are relatively simple so that further update and development of the portal will not be head scratching.
@@ -72,6 +74,7 @@ ciff_impact_portal
 |   |   |-- impact_table.json
 |   |-- App.jsx
 |   |-- config.jsx
+|   |-- Edit.jsx
 |   |-- Evaluation.jsx
 |   |-- Graphic.jsx
 |   |-- index.css
@@ -101,13 +104,14 @@ ciff_impact_portal
 | `src/main.jsx` | The main javascript which renders all react components associated with the app. |
 | `src/App.jsx` | All react components used in the portal are defined and returned in this file. |
 | `src/MainApp.jsx` | This file defines the main part of the map, which are filter panel, map panel, and info panel on the right. |
+| `src/Edit.jsx` | Defining component for editing evaluation entry or adding a new one. |
 | `src/Evaluation.jsx` | Defining the information related to a specific evaluation. |
 | `src/Graphic.jsx` | Visual summary of the listed evaluations is governed by this source file. |
 | `src/Map.jsx` | This javascript dictates how the map is displayed and how it interactively behaves. |
 | `src/MapSmall.jsx` | Defining evaluation-specific map that is called in `Evaluation.jsx` and `PanelInfo.jsx`. |
 | `src/Pages.jsx` | Contents displayed in the 'modal' when the user clicks 'About', and 'Guide' menu on top of the page. |
 | `src/PanelFilter.jsx` | Defining the filtering functionality of the app. |
-| `src/PanelInfo.jsx` |  |
+| `src/PanelInfo.jsx` | Dictating how the info panel (right to the map) looks like. |
 | `src/utils.jsx` | Containing basic functions required in the app. |
 
 ## Data structure and update
@@ -164,50 +168,58 @@ In `impact_table.json`, each JSON object is associated with a particular evaluat
 
 `Image` column defines the path to image file representing the evaluation. The image file is kept in `./public/` directory that is regarded as root for images, e.g., image path of `./image-sample.png` refers to `./public/image-sample.png`.
 
-`Region` may be empty or containing an object listing the regions associated with the evaluation. As shown in the right, the keys of that object are the `CountryIDs` while the values are lists of the regions (in square brackets). Values of `Country`, `CountryID`, and `Region` should be consistent with the ones in `boundary.json`.
-To be noted that `Sector`, `Target Population`, `Primary Outcome`, and `Evaluator` are used for data filtering, altogether with `Country`. So, standardisation of their values is essential. Lengthy list of possible values in the filter needs to be avoided as it may confuse the user.
+`Region` may be empty or containing a list of the regions associated with the evaluation. Values of `Country`, and `Region` should be consistent with the ones in `boundary.json`.
+To be noted that `Sector`, `Type`, `Funder`, and `Years of Investment` are used for data filtering, altogether with `Country`. So, standardisation of their values is essential. Lengthy list of possible values in the filter needs to be avoided as it may confuse the user.
 
 ```json
 {
-    "EvaluationID":8,
-    "Investment Name":"Advanced Newborn Care in Ghana: Making Every Baby Count Initiative (MEBCI) 2.0",
-    "Proposed Public Title":"Making Every Baby Count: Advanced Newborn Care in Ghana",
-    "Multi":"No",
-    "Image":"./image-sample.png",
-    "Status":"On-going",
-    "Evaluator":"CIFF",
-    "Country":"Ghana",
-    "CountryID":"Ghana",
-    "Region":"{'Ghana':['Greater Accra Region', 'Eastern Region', 'Bono Region']}",
-    "Sector":"Newborn Health",
-    "Target Population":"Newborns",
-    "Primary Outcome":"Neo-natal Mortality Rate",
-    "Study Design":"Mixed methods ...",
-    "Implementing Agency":"Kybele",
-    "Evaluation Agency":"LSHTM, UOM, APHRC, AYA Collective",
-    "Years of Investment":"2020 to 2024",
-    "Investment Amount":"$7,300,000",
-    "Programme Description":"MEBCI 2.0 aims to ...",
-    "Areas of Programme":"Programme active in: ...",
-    "Impact Statement":"",
-    "Data Availability":"",
-    "Link":"https://dx.doi.org/10.1093/ajcn",
-    "GPS":"Yes",
-    "Coord":"{'Ghana':[[-2.314,7.344], [-0.257,6.096], [-0.024,5.673], [-0.197,5.562]]}"
+        "EvaluationID":4,
+        "Investment Name":"ENAT-Enhancing Nutrition and Antenatal Infection Treatment for Maternal and Child Health",
+        "Proposed Public Title":"Enhancing Nutrition and Antenatal Infection Treatment for Maternal and Child Health",
+        "Image":"./image-sample.png",
+        "Status":"Completed",
+        "Funder":"CIFF",
+        "Country":["Ethiopia"],
+        "Region":["Amhara", "Oromia"],
+        "Coordinate":"",
+        "Sector":"Maternal and Newborn Health",
+        "Primary Outcomes":"Low birth weight (LBW)",
+        "Type":"Impact evaluation",
+        "Implementing Agency":"Jhpeigo",
+        "Evaluation Agency":"MELA",
+        "Years of Investment":"2018, 2019, 2020, 2021, 2022",
+        "Investment Amount":"$3,550,000",
+        "Study Design":"Cluster randomized control trial",
+        "Programme Description":"",
+        "Areas of Programme":"",
+        "Impact Statement":"",
+        "Link to Publication":"",
+        "Multi":false
 },
 ```
 
 For completed investment/evaluation, published report/work can be available. The link to such publication is stored in `Link` column.
 
-The `Study Design` ... `Data Availability` may contain plain text or HTML-like element (HTML tags can be applied) that will be displayed in table as detail information about the evaluation. If the evaluation includes geo-coordinates, GPS will be "Yes" and `Coord` will contain an object with array of Longitude-Latitude pairs as its value.
+The `Study Design` ... `Data Availability` may contain plain text or HTML-like element (HTML tags can be applied) that will be displayed in table as detail information about the evaluation. If the evaluation includes geo-coordinates, `Coordinate` will contain array containing Longitude-Latitude pairs as its value.
 
 ```json
-"Coord":"{'CountryID':[[LON1,LAT1], [LON2,LAT2], [LON3,LAT3]]}"
+"Coordinate":"[[LON1,LAT1], [LON2,LAT2], [LON3,LAT3], ...]"
 ```
 
 To modify the content of this file, just edit the value according to the rules stated before. Do not forget double-quote in each value. To add a new evaluation item, just add a new JSON-like object with the same structure. Make sure that the country or region name is synchronized with one in `boundary.json`.
 
 ![detail](public/detail-info.PNG)
+
+### Alternative edit
+To edit an evaluation entry's JSON record according to the defined standard, use the editing form accessible in this [https://rhorom.github.io/ciff_impact_portal/#/edit](page).
+
+Existing records are listed in a table, each with an `Edit` button. To create a new record, click the `Create` button at the top.
+
+Clicking either button will open the editor form. Modify the field values, referring to the short info provided for each field to ensure correct input.
+
+To download the JSON file for the currently edited entry, click `Download` at the bottom. To download a JSON file containing all records, including your updates, click `Merge and Download`.
+
+Finally, append or merge the downloaded file with `src/data/impact_table.json`.
 
 ## Development setup
 1. Install [Node.js](https://nodejs.org/en/download/) and [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm).
@@ -258,10 +270,9 @@ As stated above, image files are stored in `./public/` directory, including icon
     export const columns = {
         'country':'Country', 
         'sector':'Sector', 
-        'population':'Target Population', 
-        'outcome':'Primary Outcome', 
-        'status':'Status', 
-        'sponsor':'Sponsor'
+        'type':'Type', 
+        'funder':'Funder', 
+        'yearsOfInvestment':'Years of Investment'
         } 
     ```
 
@@ -285,4 +296,4 @@ As stated above, image files are stored in `./public/` directory, including icon
     - `midContent`: information to show on the right side of the Detail Info panel.
     - `longContent`: more extended information to show below the evaluation-specific map.
 
-    Beside these constants, some fields like `Regions` and `Publisher results` are specifically defined in `./src/PanelInfo.jsx`.
+    Beside these constants, some fields like `Regions` and `Published results` are specifically defined in `./src/PanelInfo.jsx`.
